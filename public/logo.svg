@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+  <defs>
+    <style>
+      .primary { fill: #005129; }
+      .accent { fill: #F4A817; }
+      .text-main { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 42px; fill: #005129; }
+      .text-accent { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 42px; fill: #F4A817; }
+    </style>
+  </defs>
+  <!-- Bus Icon/Mark -->
+  <g transform="translate(10, 20)">
+    <rect x="0" y="5" width="60" height="50" rx="8" class="primary"/>
+    <rect x="5" y="10" width="50" height="20" rx="2" fill="white" opacity="0.9"/>
+    <rect x="10" y="38" width="12" height="6" rx="1" class="accent"/>
+    <rect x="38" y="38" width="12" height="6" rx="1" class="accent"/>
+    <path d="M5,55 L55,55" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <!-- Text -->
+  <text x="85" y="62" class="text-main">BusRoute</text>
+  <text x="290" y="62" class="text-accent">PK</text>
+</svg>
