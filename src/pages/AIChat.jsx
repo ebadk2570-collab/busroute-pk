@@ -61,11 +61,6 @@ export default function AIChat() {
     const queryText = textToSend || input
     if (!queryText.trim()) return
 
-    if (!apiKey) {
-      console.error('Gemini API key is not configured in .env')
-      return
-    }
-
     // Add user message
     const userMsg = {
       id: `user-${Date.now()}`,
@@ -127,10 +122,40 @@ GUIDELINES:
         parts: [{ text: queryText }]
       })
 
+      // Helper function to call Gemini directly (for local fallback)
+      const fetchDirectGemini = async () => {
+        if (!apiKey) {
+          throw new Error('Gemini API key is not configured in local environment variable (VITE_GEMINI_API_KEY).')
+        }
+        return fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              contents: chatHistory,
+              systemInstruction: {
+                parts: [{ text: systemInstruction }]
+              },
+              generationConfig: {
+                temperature: 0.3,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 1500
+              }
+            })
+          }
+        )
+      }
+
       // 4. API Request
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
+      let response;
+      const isDev = import.meta.env.DEV;
+
+      try {
+        response = await fetch('/api/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -139,20 +164,33 @@ GUIDELINES:
             contents: chatHistory,
             systemInstruction: {
               parts: [{ text: systemInstruction }]
-            },
-            generationConfig: {
-              temperature: 0.3,
-              topK: 40,
-              topP: 0.95,
-              maxOutputTokens: 1500
             }
           })
+        });
+
+        // If the backend API route is not found (404) or fails, try to fallback in development
+        if (!response.ok) {
+          if (isDev && apiKey) {
+            console.warn('Backend API route failed or not found. Falling back to direct client-side Gemini API call.');
+            response = await fetchDirectGemini();
+          } else {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `HTTP error ${response.status}`);
+          }
         }
-      )
+      } catch (err) {
+        // If fetch failed completely (e.g. local server not running) and we are in dev, try fallback
+        if (isDev && apiKey) {
+          console.warn('Could not connect to /api/chat. Falling back to direct client-side Gemini API call:', err);
+          response = await fetchDirectGemini();
+        } else {
+          throw err;
+        }
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error?.message || `HTTP error ${response.status}`)
+        throw new Error(errorData.error?.message || errorData.error || `HTTP error ${response.status}`)
       }
 
       const data = await response.json()
