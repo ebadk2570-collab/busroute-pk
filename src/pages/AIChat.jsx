@@ -26,7 +26,6 @@ export default function AIChat() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY || ''
-  const [viewportHeight, setViewportHeight] = useState(window.innerHeight)
 
   // Ref for auto-scrolling
   const messagesEndRef = useRef(null)
@@ -44,15 +43,6 @@ export default function AIChat() {
   useEffect(() => {
     scrollToBottom()
   }, [messages, isLoading])
-
-  // --- VIEWPORT RESIZE HANDLER ---
-  useEffect(() => {
-    const handleResize = () => {
-      setViewportHeight(window.innerHeight)
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
 
 
@@ -283,18 +273,12 @@ GUIDELINES:
   }
 
   return (
-    <div 
-      className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 grid grid-cols-1 md:grid-cols-12 gap-gutter bg-background" 
-      style={{ height: `${viewportHeight - 180}px`, minHeight: '650px' }}
-    >
-      {/* Left: Chat Area */}
-      <section 
-        className="md:col-span-8 bg-white border border-outline-variant/20 rounded-3xl overflow-hidden shadow-sm"
-        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-      >
+    <>
+      {/* Left Chat Area Container */}
+      <section className="flex-1 flex flex-col h-full bg-white rounded-xl border border-zinc-200/80 overflow-hidden">
         
         {/* Chat Toolbar Header */}
-        <div className="p-4 border-b border-outline-variant/25 flex justify-between items-center bg-surface-container-low select-none">
+        <div className="p-4 border-b border-zinc-100 flex justify-between items-center bg-white select-none">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary">
               <span className="material-symbols-outlined font-extrabold" style={{ fontSize: '24px' }}>smart_toy</span>
@@ -309,10 +293,9 @@ GUIDELINES:
           </div>
 
           <div className="flex items-center gap-2">
-            
             <button 
               onClick={handleClearHistory}
-              className="p-2 border border-outline-variant/30 rounded-xl text-outline hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-200 flex items-center justify-center"
+              className="p-2 border border-zinc-200 rounded-xl text-zinc-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-200 flex items-center justify-center"
               title="Clear History"
             >
               <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>delete</span>
@@ -320,13 +303,8 @@ GUIDELINES:
           </div>
         </div>
 
-
-
         {/* Message Thread Box */}
-        <div 
-          className="p-6 space-y-6 scrollbar-thin bg-background/50" 
-          style={{ flex: 1, overflowY: 'auto' }}
-        >
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-zinc-50/30">
           {messages.map((message) => {
             const isUser = message.sender === 'user'
             
@@ -386,55 +364,58 @@ GUIDELINES:
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Suggestion Chips Panel */}
-        <div className="px-6 py-3 border-t border-outline-variant/10 bg-white flex flex-wrap gap-2 select-none">
-          {['BRT Green Line routes', 'Malir se Tower route', 'PBS R-1 vs R-2', 'Pink bus timings?'].map(chip => (
-            <button 
-              key={chip}
-              onClick={() => handleSidebarClick(chip)}
-              disabled={isLoading}
-              className="bg-surface-container-lowest border border-outline-variant/35 px-4 py-2 rounded-full text-on-surface hover:bg-primary-container hover:text-on-primary-container hover:border-transparent active:scale-95 transition-all duration-200 select-none text-[13px] font-semibold"
-            >
-              {chip}
-            </button>
-          ))}
-        </div>
+        {/* Input Box & Suggestion Chips (Bottom Lock) */}
+        <div className="p-4 bg-zinc-50/50 border-t border-zinc-100 flex flex-col gap-2">
+          {/* Suggestion Chips */}
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none whitespace-nowrap select-none">
+            {['BRT Green Line routes', 'Malir se Tower route', 'PBS R-1 vs R-2', 'Pink bus timings?'].map(chip => (
+              <button 
+                key={chip}
+                onClick={() => handleSidebarClick(chip)}
+                disabled={isLoading}
+                className="bg-white border border-zinc-200/80 px-4 py-2 rounded-full text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 active:scale-95 transition-all duration-200 text-[13px] font-semibold flex-shrink-0"
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
 
-        {/* Chat Text Input Field */}
-        <div className="p-4 border-t border-outline-variant/20 bg-white flex items-center gap-3">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSend()
-              }
-            }}
-            disabled={isLoading}
-            className="flex-grow bg-surface-container-low border border-outline-variant/20 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-on-surface-variant/40 text-on-surface font-medium"
-            placeholder="Yahan poochain (e.g. NIPA se Saddar jane ki bus...)"
-            style={{ fontSize: '15px' }}
-          />
-          <button 
-            onClick={() => handleSend()}
-            disabled={isLoading || !input.trim()}
-            className="bg-primary text-on-primary p-3.5 rounded-2xl hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all flex items-center justify-center shadow-md shadow-primary/10 grow-0 shrink-0"
-          >
-            <span className="material-symbols-outlined font-extrabold" style={{ fontVariationSettings: "'FILL' 1", fontSize: '20px' }}>send</span>
-          </button>
+          {/* Text Input Box */}
+          <div className="flex items-center gap-3">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSend()
+                }
+              }}
+              disabled={isLoading}
+              className="flex-grow bg-white border border-zinc-200/80 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-zinc-400 text-zinc-800 font-medium"
+              placeholder="Yahan poochain (e.g. NIPA se Saddar jane ki bus...)"
+              style={{ fontSize: '15px' }}
+            />
+            <button 
+              onClick={() => handleSend()}
+              disabled={isLoading || !input.trim()}
+              className="bg-primary text-on-primary p-3 rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:scale-100 transition-all flex items-center justify-center shadow-md shadow-primary/10 grow-0 shrink-0"
+            >
+              <span className="material-symbols-outlined font-extrabold" style={{ fontVariationSettings: "'FILL' 1", fontSize: '20px' }}>send</span>
+            </button>
+          </div>
         </div>
       </section>
 
       {/* Right Sidebar */}
-      <aside className="md:col-span-4 space-y-6 h-full overflow-y-auto pr-1 scrollbar-thin hidden md:block">
+      <aside className="w-[360px] h-full flex flex-col gap-4 overflow-y-auto hidden lg:flex">
         
         {/* Recent Searches (Now interactive!) */}
-        <div className="bg-white border border-outline-variant/20 rounded-2xl overflow-hidden shadow-sm select-none">
-          <div className="p-4 border-b border-outline-variant/25 flex justify-between items-center bg-surface-container-low">
+        <div className="bg-white border border-zinc-200/80 rounded-xl overflow-hidden shadow-sm select-none">
+          <div className="p-4 border-b border-zinc-100 flex justify-between items-center bg-white">
             <h2 className="text-on-surface font-headline font-bold text-base leading-tight">Quick Routes</h2>
-            <span className="material-symbols-outlined text-outline" style={{ fontSize: '20px' }}>history</span>
+            <span className="material-symbols-outlined text-zinc-400" style={{ fontSize: '20px' }}>history</span>
           </div>
-          <div className="divide-y divide-outline-variant/20">
+          <div className="divide-y divide-zinc-100">
             {[
               { title: 'Malir to Tower', desc: 'Find Peoples Bus & EV options' },
               { title: 'Surjani Town to Numaish', desc: 'Green Line BRT fast track route' },
@@ -444,9 +425,9 @@ GUIDELINES:
                 key={item.title} 
                 onClick={() => handleSidebarClick(`${item.title}`)}
                 disabled={isLoading}
-                className="w-full p-4 flex items-start gap-3 hover:bg-surface-container-low transition-colors text-left group disabled:opacity-50"
+                className="w-full p-4 flex items-start gap-3 hover:bg-zinc-50 transition-colors text-left group disabled:opacity-50"
               >
-                <span className="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors mt-0.5" style={{ fontSize: '20px' }}>location_on</span>
+                <span className="material-symbols-outlined text-zinc-400 group-hover:text-primary transition-colors mt-0.5" style={{ fontSize: '20px' }}>location_on</span>
                 <div className="flex-grow">
                   <p className="text-on-surface font-extrabold text-sm group-hover:text-primary transition-colors">{item.title}</p>
                   <p className="text-on-surface-variant text-[11px] mt-0.5 leading-normal">{item.desc}</p>
@@ -456,9 +437,9 @@ GUIDELINES:
           </div>
         </div>
 
-        {/* Popular Destinations (Now interactive!) */}
-        <div className="bg-white border border-outline-variant/20 rounded-2xl overflow-hidden shadow-sm select-none">
-          <div className="p-4 border-b border-outline-variant/25 bg-surface-container-low">
+        {/* Popular Stops (Now interactive!) */}
+        <div className="bg-white border border-zinc-200/80 rounded-xl overflow-hidden shadow-sm select-none">
+          <div className="p-4 border-b border-zinc-100 bg-white">
             <h2 className="text-on-surface font-headline font-bold text-base leading-tight">Popular Stops</h2>
           </div>
           <div className="p-4 grid grid-cols-1 gap-3">
@@ -469,7 +450,7 @@ GUIDELINES:
               <div 
                 key={dest.name}
                 onClick={() => handleSidebarClick(`${dest.name} ke routes`)}
-                className="relative h-24 rounded-xl overflow-hidden group cursor-pointer flex items-end p-4 border border-outline-variant/10 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-98"
+                className="relative h-24 rounded-xl overflow-hidden group cursor-pointer flex items-end p-4 border border-zinc-200/40 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 active:scale-98"
                 style={{ background: `linear-gradient(135deg, ${dest.color}, #00381a)` }}
               >
                 <div className="absolute inset-0 bus-pattern opacity-10" />
@@ -486,7 +467,7 @@ GUIDELINES:
         </div>
 
         {/* Eco Promo Card */}
-        <div className="bg-primary-container p-6 rounded-2xl text-on-primary shadow-lg relative overflow-hidden select-none border border-primary/20">
+        <div className="bg-primary p-6 rounded-xl text-white shadow-lg relative overflow-hidden select-none border border-primary/20">
           <div className="relative z-10">
             <h3 className="font-headline font-bold mb-2 text-lg leading-tight">Travel Greener 🌿</h3>
             <p className="opacity-90 mb-4 text-xs leading-relaxed">
@@ -499,9 +480,21 @@ GUIDELINES:
               Ask AI about EV/BRT
             </button>
           </div>
-          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-on-primary/10 rounded-full blur-2xl animate-pulse" />
+          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl animate-pulse" />
+        </div>
+
+        {/* Minimal Footer Inside Sidebar */}
+        <div className="mt-auto pt-4 border-t border-zinc-200/60 text-[11px] text-zinc-400 select-none">
+          <div className="flex flex-wrap gap-x-3 gap-y-1 mb-1 font-medium">
+            <a href="#" className="hover:text-zinc-600 transition-colors">Privacy Policy</a>
+            <span>•</span>
+            <a href="#" className="hover:text-zinc-600 transition-colors">Terms of Service</a>
+            <span>•</span>
+            <a href="#" className="hover:text-zinc-600 transition-colors">Help Center</a>
+          </div>
+          <div>© 2026 BusRoute PK. Smart Transit for Karachi.</div>
         </div>
       </aside>
-    </div>
+    </>
   )
 }

@@ -564,6 +564,45 @@ const routes = [
     numText: 'text-white',
     badgeColor: { bg: '#ede7f6', text: '#4a148c', border: 'rgba(74,20,140,0.2)' }
   }
+  ,
+  {
+    id: 'marwat-11',
+    routeNumber: 'Marwat 11',
+    name: 'Marwat Coach (Marwat 11)',
+    origin: 'Bhains Colony',
+    destination: 'Shireen Jinnah Colony',
+    operatorType: 'private',
+    serviceType: 'Private',
+    category: 'Private Buses',
+    stops: [
+      { label: 'Bhains Colony', type: 'start' },
+      { label: 'Labour Square', type: 'mid' },
+      { label: 'P.M.T.F Colony', type: 'mid' },
+      { label: 'SESSI Hospital', type: 'mid' },
+      { label: 'Quaidabad', type: 'mid' },
+      { label: 'Malir 15', type: 'mid' },
+      { label: 'Star Gate', type: 'mid' },
+      { label: 'Shahrah-e-Faisal', type: 'mid' },
+      { label: 'Nursery', type: 'mid' },
+      { label: 'Baloch Colony Pull', type: 'mid' },
+      { label: 'Drigh Road Stop', type: 'mid' },
+      { label: 'Korangi Industrial Area', type: 'mid' },
+      { label: 'Brooks Chowrangi', type: 'mid' },
+      { label: 'Qayyumabad', type: 'mid' },
+      { label: 'DHA / Defence Morh', type: 'mid' },
+      { label: 'Khayaban-e-Shahbaz', type: 'mid' },
+      { label: '26th Street', type: 'mid' },
+      { label: 'Abdullah Shah Ghazi Mazar', type: 'mid' },
+      { label: 'Bilawal Chowrangi', type: 'mid' },
+      { label: 'Shireen Jinnah Colony', type: 'end' }
+    ],
+    freq: 'Varies',
+    fare: 'Rs. 50 Fixed',
+    tags: ['marwat', 'coach', 'marwat 11', 'bhains colony', 'shahrah-e-faisal', 'nursery', 'quaidabad', 'malir 15', 'star gate', 'drigh road stop', 'korangi industrial area', 'brooks chowrangi', 'qayyumabad', 'dha', 'defence morh', 'khayaban-e-shahbaz', '26th street', 'abdullah shah ghazi mazar', 'bilawal chowrangi', 'shireen jinnah colony'],
+    numBg: 'bg-indigo-900',
+    numText: 'text-white',
+    badgeColor: { bg: '#ede7f6', text: '#4a148c', border: 'rgba(74,20,140,0.2)' }
+  }
 ];
 
 export default routes;

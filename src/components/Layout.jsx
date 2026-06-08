@@ -7,12 +7,12 @@ export default function Layout() {
   const isChatPage = location.pathname === '/chat'
 
   return (
-    <div className="bg-background text-on-surface min-h-screen flex flex-col" style={{ fontFamily: 'DM Sans' }}>
+    <div className={`bg-background text-on-surface ${isChatPage ? 'h-screen overflow-hidden' : 'min-h-screen'} flex flex-col`} style={{ fontFamily: 'DM Sans' }}>
       <Header />
-      <main className="flex-grow flex flex-col">
+      <main className={isChatPage ? 'flex-1 flex overflow-hidden p-4 gap-4 bg-zinc-50' : 'flex-grow flex flex-col'}>
         <Outlet />
       </main>
-      <Footer />
+      {!isChatPage && <Footer />}
 
       {/* Global Mobile FAB - visible only on mobile, and NOT on chat page */}
       {!isChatPage && (

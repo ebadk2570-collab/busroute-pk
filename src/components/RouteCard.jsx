@@ -70,7 +70,7 @@ export default function RouteCard({ route }) {
   if (!route) return null
 
   return (
-    <div className="bg-surface-container-lowest border border-outline-variant/30 p-6 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer group animate-fade-in custom-shadow min-h-[380px] w-full text-left">
+    <div className="bg-surface-container-lowest border border-outline-variant/30 p-6 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer group animate-fade-in custom-shadow h-full w-full text-left">
       <div>
         {/* Top Header */}
         <div className="flex justify-between items-start mb-4">
@@ -114,8 +114,8 @@ export default function RouteCard({ route }) {
           </div>
         </div>
 
-        {/* Timeline Stop Label Tracker (Max Height Capped for consistency) */}
-        <div className="relative py-2 mb-4 max-h-[140px] overflow-y-auto pr-1 scrollbar-thin">
+        {/* Timeline Stop Label Tracker */}
+        <div className="relative py-2 mb-4">
           <div className="absolute left-2 top-4 bottom-4 w-0.5 timeline-line" />
           <div className="flex flex-col gap-2.5">
             {route.stops?.map((stop, i) => (
